@@ -1,8 +1,8 @@
+from pico2d import *
+
 import random
 import json
 import os
-
-from pico2d import *
 
 import game_framework
 import main_state_2
@@ -122,9 +122,7 @@ def update():
         player.update()
         player.frame
         if player.frame >= 6:
-            up_key = False
-
-
+          up_key = False
 
 
 def draw():
