@@ -139,6 +139,8 @@ def draw():
 
     player.draw()
 
+    font = load_font('ENCR10B.TTF', 30)
+    font.draw(600, 570, "SCORE: %d" % (player_score + 1) , (0, 0, 0))
 
     update_canvas()
     delay(0.05)

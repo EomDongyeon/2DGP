@@ -3,6 +3,8 @@ from pico2d import *
 
 # 게임 오브젝트 클래스의 정의를 여기에
 
+font = None
+
 class Character:
     global player_score
     def __init__(self):
@@ -94,6 +96,9 @@ while running:
     for stair in stairs:
         stair.draw()
     player.draw()
+
+    font = load_font('ENCR10B.TTF', 30)
+    font.draw(200, 200, "SCORE: %d" % player_score , (0, 0, 0))
 
     update_canvas()
 
