@@ -83,15 +83,11 @@ def exit():
     del(stair)
 
 
-
 def pause():
     pass
 
-
 def resume():
     pass
-
-
 
 def handle_events():
     global player_score
@@ -111,7 +107,6 @@ def handle_events():
                 if player_score >= 20:
                     game_framework.change_state(title_state)
 
-
 def update():
     global stairs
     global player_score
@@ -122,9 +117,6 @@ def update():
         player.frame
         if player.frame >= 6:
             up_key = False
-
-
-
 
 def draw():
     global stairs
