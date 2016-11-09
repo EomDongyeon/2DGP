@@ -105,13 +105,16 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
-            if event.key == 'Q' or 'q':
-                pass  # 방향전환
-            if event.key == SDLK_SPACE:
+            if event.key == SDLK_q:
                 up_key = True
                 player_score += 1
                 if player_score >= 20:
                     game_framework.change_state(main_state_2)
+            if event.key == SDLK_w:
+                pass
+                #방향전환
+
+
 
 
 def update():
