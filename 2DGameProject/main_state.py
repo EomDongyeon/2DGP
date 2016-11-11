@@ -22,6 +22,11 @@ current_time = 0.0
 
 
 class Character:
+    image = None
+    die_image = None
+    global player_score, up_key, stair
+
+    RIGHT_STAND, LEFT_STAND, RIGHT_RUN, LEFT_RUN, RIGHT_DIE, LEFT_DIE = 0, 1, 2, 3, 4, 5
     PIXEL_PER_METER = (10.0 / 0.3)
     RUN_SPEED_KMPH = 20.0
     RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -32,15 +37,16 @@ class Character:
     ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
     FRAMES_PER_ACTION = 7
 
-    image = None
-    global player_score, up_key, stair
     def __init__(self):
         self.x, self.y = 400, 100
         self.frame = 0
         self.dir = 1
+        self.state = 3
         self.total_frames = 0.0
         if(Character.image == None):
             Character.image = load_image('resource/character_sprite_05.png')
+        if(Character.die_image == None):
+            Character.die_image = load_image('resource/character_die_sprite(200x214).png')
     def update(self, frame_time):
         distance = Character.RUN_SPEED_PPS * frame_time
         self.total_frames += Character.FRAMES_PER_ACTION * Character.ACTION_PER_TIME * frame_time
@@ -50,19 +56,31 @@ class Character:
     def jump(self, frame_time, stairs):
         global player_score
         if(stairs[player_score].dir == self.dir):
-            if(self.dir == 1):
+            if(self.dir == -1):
+                self.state = Character.LEFT_RUN
                 self.x = stairs[player_score].x
             else:
+                self.state = Character.RIGHT_RUN
                 self.x = stairs[player_score].x
+
             self.y = stairs[player_score].y + 100
         else:
+            if (self.dir == -1):
+                self.state = Character.LEFT_DIE
+                self.x = (stairs[player_score + 1].x) + ((self.dir * -1) * 51)
+            else:
+                self.state = Character.RIGHT_DIE
+                self.x = (stairs[player_score + 1].x) + ((self.dir * -1) * 51)
+            self.y = stairs[player_score].y + 100
             player_score -= 1
+    def die(self):
+        pass
     def draw(self):
-        if self.dir == -1:
-            self.state = 3
+        if(self.state < Character.RIGHT_DIE):
+            self.image.clip_draw(self.frame * 100, self.state * 214, 100, 214, self.x, self.y)
         else:
-             self.state = 2
-        self.image.clip_draw(self.frame * 100, self.state * 214,100,214,self.x,self.y)
+            self.die_image.clip_draw(self.frame * 200, (self.state % 2) * 214, 200, 214, self.x, self.y,150,180)
+
 
 class Background:
     image = None
@@ -85,10 +103,9 @@ class Stair:
         self.dir = random.randint(0,1)
         if self.dir == 0:
             self.dir = -1
-
         if(Stair.i == 0):
             Stair.dir = self.dir
-        if(self.x >= 600 or self.x <= 0):
+        if((self.x + 51) >= 600 or (self.x - 51) <= 0):
             self.dir *= -1
         self.x = self.x + ((self.dir * -1) * 51)
         self.y = self.y + 27
