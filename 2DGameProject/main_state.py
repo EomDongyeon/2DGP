@@ -28,37 +28,40 @@ class Character:
     RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
     RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
-    TIME_PER_ACTION = 0.5
+    TIME_PER_ACTION = 0.3
     ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
     FRAMES_PER_ACTION = 7
 
     image = None
     global player_score, up_key, stair
     def __init__(self):
-        self.x, self.y = Stair.x, Stair.y
+        self.x, self.y = 400, 100
         self.frame = 0
         self.dir = 1
         self.total_frames = 0.0
         if(Character.image == None):
-            Character.image = load_image('character_sprite_02.png')
+            Character.image = load_image('resource/character_sprite_05.png')
     def update(self, frame_time):
         distance = Character.RUN_SPEED_PPS * frame_time
         self.total_frames += Character.FRAMES_PER_ACTION * Character.ACTION_PER_TIME * frame_time
         self.frame = int(self.total_frames) % 7
-        self.x += (self.dir * distance)
-    def change_dir(self):
-        self.dir *= -1
-    def jump(self, frame_time):
-        if(self.dir == 1):
-            self.x -= 30
+    def change_dir(self, stairs):
+            self.dir *= -1
+    def jump(self, frame_time, stairs):
+        global player_score
+        if(stairs[player_score].dir == self.dir):
+            if(self.dir == 1):
+                self.x = stairs[player_score].x
+            else:
+                self.x = stairs[player_score].x
+            self.y = stairs[player_score].y + 100
         else:
-            self.x += 30
-        self.y += 55
+            player_score -= 1
     def draw(self):
         if self.dir == -1:
-            self.state = 1
+            self.state = 3
         else:
-             self.state = 0
+             self.state = 2
         self.image.clip_draw(self.frame * 100, self.state * 214,100,214,self.x,self.y)
 
 class Background:
@@ -66,7 +69,7 @@ class Background:
     def __init__(self):
         self.x, self.y = 0, 0
         if Background.image == None:
-            self.image = load_image('stage_1.png')
+            self.image = load_image('resource/stage_1.png')
     def draw(self):
         self.image.clip_draw(0,0,800,600,400,300)
 
@@ -85,13 +88,12 @@ class Stair:
 
         if(Stair.i == 0):
             Stair.dir = self.dir
-
         if(self.x >= 600 or self.x <= 0):
             self.dir *= -1
         self.x = self.x + ((self.dir * -1) * 51)
         self.y = self.y + 27
         if Stair.image == None:
-            Stair.image = load_image('stair.png')
+            Stair.image = load_image('resource/stair.png')
         Stair.i += 1
         Stair.x,Stair.y = self.x, self.y
     def update(self):
@@ -127,8 +129,8 @@ def resume():
 
 
 
-def handle_events():
-    global player_score, player
+def handle_events(frame_time):
+    global player_score, player, stairs
     global up_key
     events = get_events()
     for event in events:
@@ -138,22 +140,23 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
             if event.key == SDLK_q:
-                current_time = get_time()
-                frame_time = get_frame_time()
-                player.jump(frame_time)
                 player_score += 1
+                current_time = get_time()
+                frame_time = get_frame_time(frame_time)
+                player.jump(frame_time, stairs)
                 if player_score >= 20:
                     game_framework.change_state(main_state_2)
             if event.key == SDLK_w:
-                player.change_dir()
+                player_score += 1
+                player.change_dir(stairs)
                 current_time = get_time()
-                frame_time = get_frame_time()
-                player.jump(frame_time)
+                frame_time = get_frame_time(frame_time)
+                player.jump(frame_time, stairs)
                 #방향전환
 
 current_time = 0.0
 
-def get_frame_time():
+def get_frame_time(frame_time):
 
     global current_time
 
@@ -162,17 +165,15 @@ def get_frame_time():
     return frame_time
 
 
-def update():
+def update(frame_time):
     global stairs
     global player_score, current_time
     global up_key
     for stair in stairs:
         stair.update()
-    current_time = get_time()
-    frame_time = get_frame_time()
     player.update(frame_time)
 
-def draw():
+def draw(frame_time):
     global stairs, up_key, player
     clear_canvas()
     bg.draw()
