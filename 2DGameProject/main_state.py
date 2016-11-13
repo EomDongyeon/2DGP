@@ -3,24 +3,25 @@ from pico2d import *
 import random
 import json
 import os
-
 import game_framework
 import main_state_2
-import title_state
-
-
+# import class
+#from character import Character # import Boy class from boy.py
+from stair import Stair
+from background import Background
+#from timer import Timer
 
 name = "MainState"
 
 player = None
 stair = None
+timer = None
 bg = None
 font = None
 up_key = False
-player_score = None
-timer = 0.0
+player_score = 0
+main_time = 0.0
 current_time = 0.0
-
 
 class Character:
     image = None
@@ -85,70 +86,52 @@ class Character:
         else:
             self.die_image.clip_draw(self.frame * 200, (self.state % 2) * 214, 200, 214, self.x, self.y,150,180)
 
-
-class Background:
-    image = None
+class Timer:
+    cnt_time = 0.0
+    frame_image = None
+    gauge_image = None
+    time_speed = 25
     def __init__(self):
-        self.x, self.y = 0, 0
-        if Background.image == None:
-            self.image = load_image('resource/stage_1.png')
-    def draw(self):
-        self.image.clip_draw(0,0,800,600,400,300)
-
-class Stair:
-    LEFT_DIR, RIGHT_DIR = 0, 1
-    i = 0
-    x,y = 400, 20
-    image = None
-    dir = 1
-    def __init__(self):
-        self.num = Stair.i
-        self.x,y = Stair.x, Stair.y
-        self.dir = random.randint(0,1)
-        if self.dir == 0:
-            self.dir = -1
-        if(Stair.i == 0):
-            Stair.dir = self.dir
-        if((self.x + 51) >= 600 or (self.x - 51) <= 0):
-            self.dir *= -1
-        self.x = self.x + ((self.dir * -1) * 51)
-        self.y = self.y + 27
-        if Stair.image == None:
-            Stair.image = load_image('resource/stair.png')
-        Stair.i += 1
-        Stair.x,Stair.y = self.x, self.y
+        self.x, self.y = 400, 570
+        if Timer.frame_image == None:
+            self.frame_image = load_image('resource/Time_Frame.png')
+        if Timer.gauge_image == None:
+            self.gauge_image = load_image('resource/time_gauge.png')
     def update(self):
-        pass
+        Timer.cnt_time += 0.05
     def draw(self):
-        self.image.clip_draw(0,0,50,27,self.x,self.y)
-
+        global player_score
+        cnt_gauge = Timer.cnt_time * Timer.time_speed - (player_score * 20)
+        if (cnt_gauge < 0):
+            cnt_gauge = 0
+        total_gauge = 300 - cnt_gauge
+        self.gauge_image.clip_draw(0, 0, 338, 54, self.x - (cnt_gauge/2), self.y, total_gauge, 20)
+        self.frame_image.clip_draw(0,0,338,54,self.x,self.y, 300, 40)
 
 def enter():
-    global player, bg, stair, stairs, player_score
+    global player, bg, stair, stairs, player_score, timer, main_time
     bg = Background()
     player = Character()
     stair = Stair()
     stairs = [Stair() for i in range(20)]
+    timer = Timer()
     running = True
     player_score = -1
 
 
 def exit():
-    global player, bg, stair
+    global player, bg, stair, timer
     del(player)
     del(bg)
     del(stair)
-
+    del(timer)
 
 
 def pause():
     pass
 
-
 def resume():
     pass
-
-
 
 def handle_events(frame_time):
     global player_score, player, stairs
@@ -187,16 +170,17 @@ def get_frame_time(frame_time):
 
 
 def update(frame_time):
-    global stairs, timer
-    global player_score, current_time
-    global up_key
+    global main_time
+    main_time += 0.05
+
     for stair in stairs:
         stair.update()
     player.update(frame_time)
-    timer += 0.05
+    timer.update()
+
 
 def draw(frame_time):
-    global stairs, up_key, player, timer
+    # global stairs, up_key, player, cnt_time
     clear_canvas()
     bg.draw()
 
@@ -204,10 +188,10 @@ def draw(frame_time):
         stair.draw()
 
     player.draw()
+    timer.draw()
 
-    font = load_font('ENCR10B.TTF', 30)
-    font.draw(600, 570, "SCORE: %d" % (player_score + 1) , (0, 0, 0))
-    font.draw(20, 570, "TIME: %.2f" % timer , (0, 0, 0))
+    font = load_font('resource/Typo_SsangmunDongB.TTF', 30)
+    font.draw(20, 570, "SCORE: %d" % (player_score + 1) , (0, 0, 0))
 
     update_canvas()
     print('%d',player_score)
