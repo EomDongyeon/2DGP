@@ -18,6 +18,7 @@ bg = None
 font = None
 up_key = False
 player_score = None
+timer = 0.0
 current_time = 0.0
 
 
@@ -41,7 +42,7 @@ class Character:
         self.x, self.y = 400, 100
         self.frame = 0
         self.dir = 1
-        self.state = 3
+        self.state = Character.LEFT_STAND
         self.total_frames = 0.0
         if(Character.image == None):
             Character.image = load_image('resource/character_sprite_05.png')
@@ -67,9 +68,11 @@ class Character:
         else:
             if (self.dir == -1):
                 self.state = Character.LEFT_DIE
+                self.frame = 0
                 self.x = (stairs[player_score + 1].x) + ((self.dir * -1) * 51)
             else:
                 self.state = Character.RIGHT_DIE
+                self.frame = 0
                 self.x = (stairs[player_score + 1].x) + ((self.dir * -1) * 51)
             self.y = stairs[player_score].y + 100
             player_score -= 1
@@ -77,6 +80,7 @@ class Character:
         pass
     def draw(self):
         if(self.state < Character.RIGHT_DIE):
+            Character.TIME_PER_ACTION = 1.0
             self.image.clip_draw(self.frame * 100, self.state * 214, 100, 214, self.x, self.y)
         else:
             self.die_image.clip_draw(self.frame * 200, (self.state % 2) * 214, 200, 214, self.x, self.y,150,180)
@@ -183,15 +187,16 @@ def get_frame_time(frame_time):
 
 
 def update(frame_time):
-    global stairs
+    global stairs, timer
     global player_score, current_time
     global up_key
     for stair in stairs:
         stair.update()
     player.update(frame_time)
+    timer += 0.05
 
 def draw(frame_time):
-    global stairs, up_key, player
+    global stairs, up_key, player, timer
     clear_canvas()
     bg.draw()
 
@@ -202,11 +207,13 @@ def draw(frame_time):
 
     font = load_font('ENCR10B.TTF', 30)
     font.draw(600, 570, "SCORE: %d" % (player_score + 1) , (0, 0, 0))
-
+    font.draw(20, 570, "TIME: %.2f" % timer , (0, 0, 0))
 
     update_canvas()
     print('%d',player_score)
     delay(0.05)
+
+
 
 
 
