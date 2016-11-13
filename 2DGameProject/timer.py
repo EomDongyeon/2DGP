@@ -1,10 +1,13 @@
 from pico2d import *
 
+from character import Character
+
+
 class Timer:
     cnt_time = 0.0
     frame_image = None
     gauge_image = None
-    time_speed = 25
+    time_speed = 30
     def __init__(self):
         self.x, self.y = 400, 570
         if Timer.frame_image == None:
@@ -14,5 +17,9 @@ class Timer:
     def update(self):
         Timer.cnt_time += 0.05
     def draw(self):
-        self.gauge_image.clip_draw(0, 0, 338, 54, self.x - ((Timer.cnt_time * Timer.time_speed) / 2), self.y, (300 - ((Timer.cnt_time * Timer.time_speed))), 20)
+        cnt_gauge = Timer.cnt_time * Timer.time_speed - (Character.player_score * 20)
+        if (cnt_gauge < 0):
+            cnt_gauge = 0
+        total_gauge = 300 - cnt_gauge
+        self.gauge_image.clip_draw(0, 0, 338, 54, self.x - (cnt_gauge/2), self.y, total_gauge, 20)
         self.frame_image.clip_draw(0,0,338,54,self.x,self.y, 300, 40)
