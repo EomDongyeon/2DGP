@@ -16,6 +16,7 @@ name = "Stage1"
 
 player = None
 stair = None
+stairs = None
 timer = None
 bg = None
 font = None
@@ -24,33 +25,21 @@ main_time = 0.0
 current_time = 0.0
 
 def enter():
-    global player, bg, stair, stairs, timer, main_time
+    global player, bg, stairs, timer, main_time
     bg = Background()
-    player = Character()
-    stair = Stair()
-    stairs = [Stair() for i in range(20)]
+    stairs = [Stair() for i in range(21)]
+    player = Character(stairs)
     timer = Timer()
-    running = True
-
-def reset():
-    global player, bg, stair, stairs, timer, main_time
-    Character.player_score = 0
-    bg = Background()
-    player = Character()
-    stair = Stair()
-    stairs = [Stair() for i in range(20)]
-    timer = Timer()
-    running = True
     main_time = 0.0
     current_time = 0.0
+    running = True
 
 def exit():
-    global player, bg, stair, timer, stairs
+    global player, bg, timer, stairs
     del(player)
     del(bg)
-    del(stair)
     del(stairs)
-    del(timer)
+    #del(timer)
 
 
 def pause():
@@ -60,7 +49,7 @@ def resume():
     pass
 
 def handle_events(frame_time):
-    global player, stairs,up_key
+    global player, stairs, up_key
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -81,14 +70,17 @@ def handle_events(frame_time):
                     current_time = get_time()
                     frame_time = get_frame_time(frame_time)
                     player.jump(frame_time, stairs)
+        elif event.type == SDL_KEYUP:
+            if event.key == SDLK_q:
+                    Character.jump_key = True
+            if event.key == SDLK_w:
+                    Character.jump_key = True
 
 
 current_time = 0.0
 
 def get_frame_time(frame_time):
-
     global current_time
-
     frame_time = get_time() - current_time
     current_time += frame_time
     return frame_time
@@ -97,18 +89,19 @@ def get_frame_time(frame_time):
 def update(frame_time):
     global main_time
     main_time += 0.05
-    if (Character.player_score >= 20):
-        Character.player_score = 0
-        game_framework.pop_state()
-        game_framework.push_state(gameover_state)
     for stair in stairs:
         stair.update()
-    player.update(frame_time)
+
+    player.update(frame_time,stairs)
     timer.update()
+
+    if (Character.player_score >= 20):
+        Character.player_score = 0
+        game_framework.push_state(gameover_state)
 
 
 def draw(frame_time):
-    # global stairs, up_key, player, cnt_time
+    global stair, stairs, up_key, player, cnt_time, timer
     clear_canvas()
     bg.draw()
 
@@ -119,10 +112,10 @@ def draw(frame_time):
     timer.draw()
 
     font = load_font('resource/Typo_SsangmunDongB.TTF', 30)
-    font.draw(20, 570, "SCORE: %d" % (Character.player_score + 1) , (0, 0, 0))
+    font.draw(20, 570, "SCORE: %d" % (Character.player_score) , (0, 0, 0))
 
     update_canvas()
-    print('%d', Character.player_score)
+
     delay(0.05)
 
 
