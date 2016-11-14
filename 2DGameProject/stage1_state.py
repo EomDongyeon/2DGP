@@ -32,13 +32,24 @@ def enter():
     timer = Timer()
     running = True
 
+def reset():
+    global player, bg, stair, stairs, timer, main_time
+    Character.player_score = 0
+    bg = Background()
+    player = Character()
+    stair = Stair()
+    stairs = [Stair() for i in range(20)]
+    timer = Timer()
+    running = True
+    main_time = 0.0
+    current_time = 0.0
 
 def exit():
     global player, bg, stair, timer, stairs
     del(player)
     del(bg)
     del(stair)
-    del (stairs)
+    del(stairs)
     del(timer)
 
 
@@ -88,6 +99,7 @@ def update(frame_time):
     main_time += 0.05
     if (Character.player_score >= 20):
         Character.player_score = 0
+        game_framework.pop_state()
         game_framework.push_state(gameover_state)
     for stair in stairs:
         stair.update()

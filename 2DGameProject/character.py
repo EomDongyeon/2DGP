@@ -70,6 +70,7 @@ class Character:
         f = open('data/score_data.txt', 'w')
         json.dump(score_data, f)
         f.close()
+        Character.player_score = 0
         game_framework.push_state(gameover_state)
     def draw(self):
         if(self.state < Character.RIGHT_DIE):

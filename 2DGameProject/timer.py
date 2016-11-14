@@ -23,3 +23,6 @@ class Timer:
         total_gauge = 300 - cnt_gauge
         self.gauge_image.clip_draw(0, 0, 338, 54, self.x - (cnt_gauge/2), self.y, total_gauge, 20)
         self.frame_image.clip_draw(0,0,338,54,self.x,self.y, 300, 40)
+        print(total_gauge)
+        if(total_gauge < 0):
+            Character.die_state = True
