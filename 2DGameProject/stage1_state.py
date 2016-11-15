@@ -27,7 +27,7 @@ current_time = 0.0
 def enter():
     global player, bg, stairs, timer, main_time
     bg = Background()
-    stairs = [Stair() for i in range(21)]
+    stairs = [Stair() for i in range(100)]
     player = Character(stairs)
     timer = Timer()
     main_time = 0.0
@@ -49,7 +49,7 @@ def resume():
     pass
 
 def handle_events(frame_time):
-    global player, stairs, up_key
+    global player, bg, stairs, up_key
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -59,22 +59,33 @@ def handle_events(frame_time):
                 game_framework.quit()
             if event.key == SDLK_q:
                 Character.player_score += 1
-                if (Character.player_score < 20):
+                if (Character.player_score < 100):
                     current_time = get_time()
                     frame_time = get_frame_time(frame_time)
                     player.jump(frame_time, stairs)
+                    if (Character.player_score >= 5):
+                        bg.bg_moveY()
+                        for stair in stairs:
+                            stair.moveY()
+                        player.moveY(stairs)
             if event.key == SDLK_w: #방향전환
                 Character.player_score += 1
-                if (Character.player_score < 20):
+                if (Character.player_score < 100):
                     player.change_dir(stairs)
                     current_time = get_time()
                     frame_time = get_frame_time(frame_time)
                     player.jump(frame_time, stairs)
+                    if (Character.player_score >= 5):
+                        bg.bg_moveY()
+                        for stair in stairs:
+                            stair.moveY()
+                        player.moveY(stairs)
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_q:
-                    Character.jump_key = True
+                Character.jump_key = True
             if event.key == SDLK_w:
-                    Character.jump_key = True
+                Character.jump_key = True
+
 
 
 current_time = 0.0
@@ -95,7 +106,7 @@ def update(frame_time):
     player.update(frame_time,stairs)
     timer.update()
 
-    if (Character.player_score >= 20):
+    if (Character.player_score >= 100):
         Character.player_score = 0
         game_framework.push_state(gameover_state)
 

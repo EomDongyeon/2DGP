@@ -13,7 +13,7 @@ class Character:
     die_state = False
     dead_time = 0.0
 
-    RIGHT_STAND, LEFT_STAND, RIGHT_RUN, LEFT_RUN, RIGHT_DIE, LEFT_DIE = 0, 1, 2, 3, 4, 5
+    DIE, RIGHT_RUN, LEFT_RUN, RIGHT_STAND, LEFT_STAND = 0, 1, 2, 3, 4
     PIXEL_PER_METER = (10.0 / 0.3)
     RUN_SPEED_KMPH = 20.0
     RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -29,7 +29,7 @@ class Character:
         Character.dead_time = 0.0
         Character.player_score = 0
         Character.jump_key = False
-        self.x, self.y = stairs[0].x, stairs[0].y + 100
+        self.x, self.y = stairs[0].x, stairs[0].y + 50
         self.frame = 0
         self.dir = stairs[0].dir
         if(stairs[0].dir == -1):
@@ -40,16 +40,16 @@ class Character:
         self.total_frames = 0.0
 
         if(Character.image == None):
-            Character.image = load_image('resource/character_sprite_05.png')
+            Character.image = load_image('resource/player.png')
         if(Character.die_image == None):
-            Character.die_image = load_image('resource/character_die_sprite(200x214).png')
+            Character.die_image = load_image('resource/player.png')
 
     def reset(self, stairs):
         Character.dead_time = 0.0
         Character.player_score = 0
         Character.die_state = False
         Character.jump_key = False
-        self.x, self.y = stairs[0].x, stairs[0].y + 100
+        self.x, self.y = stairs[0].x, stairs[0].y + 50
         self.frame = 0
         if(stairs[0].dir == -1):
             self.state = Character.LEFT_STAND
@@ -58,9 +58,9 @@ class Character:
         self.state = Character.LEFT_STAND
         self.total_frames = 0.0
         if(Character.image == None):
-            Character.image = load_image('resource/character_sprite_05.png')
+            Character.image = load_image('resource/player.png')
         if(Character.die_image == None):
-            Character.die_image = load_image('resource/character_die_sprite(200x214).png')
+            Character.die_image = load_image('resource/player.png')
 
     def update(self, frame_time,stairs):
         distance = Character.RUN_SPEED_PPS * frame_time
@@ -90,31 +90,31 @@ class Character:
                 self.state = Character.RIGHT_RUN
                 self.x = stairs[Character.player_score].x
 
-            self.y = stairs[Character.player_score].y + 100
+            self.y = stairs[Character.player_score].y + 60
         else:
-            self.y = stairs[Character.player_score].y + 100
+            self.y = stairs[Character.player_score].y + 60
             Character.player_score -= 1
             if (self.dir == -1):
                 Character.die_state = True
-                self.state = Character.LEFT_DIE
+                self.state = Character.DIE
                 self.frame = 0
                 self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
                 self.die(stairs)
             else:
                 Character.die_state = True
-                self.state = Character.RIGHT_DIE
+                self.state = Character.DIE
                 self.frame = 0
                 self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
                 self.die(stairs)
     def die(self, stairs):
-        if(self.frame >= 6):
+        if(Character.dead_time >= 0.5):
             Character.dead_time = 0
             # 파일 출력
             f = open('data/score_data.txt', 'r')
             score_data = json.load(f)
             f.close()
 
-            score_data.append({'score': Character.player_score + 1})
+            score_data.append({'score': Character.player_score})
 
             # 파일 쓰기
             f = open('data/score_data.txt', 'w')
@@ -130,9 +130,12 @@ class Character:
             delay(1.0)
             game_framework.change_state(gameover_state)
 
+    def moveY(self, stairs):
+        self.y = stairs[Character.player_score].y + 60
+
     def draw(self):
-        if(self.state < Character.RIGHT_DIE):
-            self.image.clip_draw(self.frame * 100, self.state * 214, 100, 214, self.x, self.y)
+        print(self.state)
+        if(self.state > Character.DIE):
+            self.image.clip_draw(self.frame * 96, self.state * 148, 86, 136, self.x, self.y)
         else:
-            Character.TIME_PER_ACTION = 0.2
-            self.die_image.clip_draw(self.frame * 200, (self.state % 2) * 214, 200, 214, self.x, self.y,150,180)
+            self.image.clip_draw(self.frame * 96, self.state * 145, 86, 140, self.x, self.y)

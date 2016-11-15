@@ -53,6 +53,8 @@ class Stair:
         Stair.i += 1
         Stair.x,Stair.y = self.x, self.y
 
+    def moveY(self):
+        self.y -= 27
 
     def update(self):
         pass
