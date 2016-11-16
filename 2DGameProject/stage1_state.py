@@ -35,7 +35,7 @@ def enter():
     running = True
 
 def exit():
-    global player, bg, timer, stairs
+    global player, bg, stairs
     del(player)
     del(bg)
     del(stairs)
