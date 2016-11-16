@@ -7,7 +7,7 @@ class Timer:
     cnt_time = 0.0
     frame_image = None
     gauge_image = None
-    time_speed = 50
+    time_speed = 20
     def __init__(self):
         self.x, self.y = 400, 570
         Timer.cnt_time = 0.0
@@ -27,5 +27,8 @@ class Timer:
         self.gauge_image.clip_draw(0, 0, 338, 54, self.x - (cnt_gauge/2), self.y, total_gauge, 20)
         self.frame_image.clip_draw(0,0,338,54,self.x,self.y, 300, 40)
 
-      #  if(total_gauge <= 0):
-      #      Character.die_state = True
+        if(total_gauge <= 0):
+            self.bgm1 = load_music('resource/sound/game_over.wav')
+            self.bgm1.set_volume(10)
+            self.bgm1.play(1)
+            Character.die_state = True

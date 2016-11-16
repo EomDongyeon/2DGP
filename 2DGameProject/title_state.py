@@ -5,15 +5,18 @@ from pico2d import *
 
 name = "TitleState"
 image = None
-
+bgm = None
 
 def enter():
-    global image
+    global image, bgm
+    bgm = load_music('resource/sound/bgm.mp3')
+    bgm.set_volume(3)
+    bgm.repeat_play()
     image = load_image('resource/title.png')
 
 
 def exit():
-    global image
+    global image, bgm
     del(image)
 
 
@@ -31,12 +34,14 @@ def handle_events(frame_time):
 
 
 def draw(frame_time):
+    global bgm
     clear_canvas()
     image.draw(400, 300)
     update_canvas()
 
 
 def update(frame_time):
+    global bgm
     pass
 
 

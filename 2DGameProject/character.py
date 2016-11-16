@@ -100,12 +100,18 @@ class Character:
                 self.frame = 0
                 self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
                 self.die(stairs)
+                self.bgm1 = load_music('resource/sound/game_over.wav')
+                self.bgm1.set_volume(64)
+                self.bgm1.play(1)
             else:
                 Character.die_state = True
                 self.state = Character.DIE
                 self.frame = 0
                 self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
                 self.die(stairs)
+                self.bgm1 = load_music('resource/sound/game_over.wav')
+                self.bgm1.set_volume(64)
+                self.bgm1.play(1)
     def die(self, stairs):
         if(Character.dead_time >= 0.5):
             Character.dead_time = 0
