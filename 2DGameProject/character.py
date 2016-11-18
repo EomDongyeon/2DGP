@@ -100,7 +100,7 @@ class Character:
                 self.frame = 0
                 self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
                 self.die(stairs)
-                self.bgm1 = load_music('resource/sound/game_over.wav')
+                self.bgm1 = load_music('resource/sound/game_over.mp3')
                 self.bgm1.set_volume(64)
                 self.bgm1.play(1)
             else:
@@ -109,7 +109,7 @@ class Character:
                 self.frame = 0
                 self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
                 self.die(stairs)
-                self.bgm1 = load_music('resource/sound/game_over.wav')
+                self.bgm1 = load_music('resource/sound/game_over.mp3')
                 self.bgm1.set_volume(64)
                 self.bgm1.play(1)
     def die(self, stairs):
@@ -133,7 +133,7 @@ class Character:
             Stair.x, Stair.y = 400, 20
             Stair.image = None
             Character.die_state = False
-            delay(1.0)
+            delay(3.3)
             game_framework.change_state(gameover_state)
 
     def moveY(self, stairs):
