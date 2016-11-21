@@ -1,5 +1,5 @@
 import game_framework
-import stage1_state
+import stage1_play_state
 
 from pico2d import *
 
@@ -31,7 +31,7 @@ def update(frame_time):
         load_num = 1
     elif (logo_time > 1.5):
         logo_time = 0
-        game_framework.push_state(stage1_state)
+        game_framework.push_state(stage1_play_state)
 
     delay(0.01)
     logo_time += 0.01

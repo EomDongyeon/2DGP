@@ -1,6 +1,6 @@
 import game_framework
 import score
-import stage1_state
+import stage1_play_state
 import itemshop_state
 from pico2d import *
 

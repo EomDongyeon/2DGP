@@ -1,6 +1,6 @@
 import game_framework
 import score
-import stage1_state
+import stage1_play_state
 
 from pico2d import *
 
@@ -43,7 +43,7 @@ def handle_events(frame_time):
                 if(key_num == 0):
                     game_framework.change_state(itemshop_state)
                 else:
-                    game_framework.change_state(stage1_state)
+                    game_framework.change_state(stage1_play_state)
 
 def score_check(num):      # 게임 스코어 및 게임 머니 체크
     Num = []

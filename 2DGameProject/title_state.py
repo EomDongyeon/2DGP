@@ -1,5 +1,5 @@
 import game_framework
-import stage1_intro
+import stage1_intro_state
 from pico2d import *
 
 
@@ -29,7 +29,7 @@ def handle_events(frame_time):
             if(event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
                 game_framework.quit()
             elif(event.type, event.key) == (SDL_KEYDOWN, SDLK_SPACE):
-                game_framework.push_state(stage1_intro)
+                game_framework.push_state(stage1_intro_state)
 
 
 

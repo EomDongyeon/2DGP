@@ -24,7 +24,8 @@ class Timer:
         elif(cnt_gauge > 300):
             cnt_gauge = 300
         total_gauge = 300 - cnt_gauge
-        self.gauge_image.clip_draw(0, 0, 338, 54, self.x - (cnt_gauge/2), self.y, total_gauge, 20)
+        sizeX_gauge = self.x - (cnt_gauge/2)
+        self.gauge_image.clip_draw(0, 0, 338, 54, sizeX_gauge, self.y, total_gauge, 20)
         self.frame_image.clip_draw(0,0,338,54,self.x,self.y, 300, 40)
 
         if(total_gauge <= 0):
