@@ -41,7 +41,6 @@ def exit():
     del(stairs)
     #del(timer)
 
-
 def pause():
     pass
 
