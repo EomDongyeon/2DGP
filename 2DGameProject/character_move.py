@@ -5,6 +5,7 @@ from pico2d import *
 
 font = None
 
+
 class Character:
     global player_score
     def __init__(self):

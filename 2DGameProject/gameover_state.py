@@ -4,7 +4,6 @@ import stage1_play_state
 import itemshop_state
 from pico2d import *
 
-
 name = "GameOverState"
 bg_image = None
 board_image = None
