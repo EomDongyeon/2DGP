@@ -86,8 +86,6 @@ def handle_events(frame_time):
             if event.key == SDLK_w:
                 Character.jump_key = True
 
-
-
 current_time = 0.0
 
 def get_frame_time(frame_time):

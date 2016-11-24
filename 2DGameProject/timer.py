@@ -2,7 +2,6 @@ from pico2d import *
 
 from character import Character
 
-
 class Timer:
     cnt_time = 0.0
     frame_image = None
