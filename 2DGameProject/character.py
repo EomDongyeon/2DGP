@@ -120,6 +120,7 @@ class Character:
             score_data = json.load(f)
             f.close()
 
+
             score_data.append({'score': Character.player_score})
 
             # 파일 쓰기

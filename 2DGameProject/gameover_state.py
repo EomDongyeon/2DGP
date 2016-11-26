@@ -11,6 +11,7 @@ select_image = None
 key_num = 0
 font = 0
 
+
 def enter():
     global bg_image, board_image, select_image
     bg_image = load_image('resource/default_bg.png')

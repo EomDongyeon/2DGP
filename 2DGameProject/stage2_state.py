@@ -88,6 +88,7 @@ def handle_events(frame_time):
 
 current_time = 0.0
 
+
 def get_frame_time(frame_time):
     global current_time
     frame_time = get_time() - current_time
