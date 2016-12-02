@@ -5,6 +5,8 @@ import stage1_play_state
 from pico2d import *
 
 
+
+
 name = "ItemShopState"
 bg_image = None
 board_image = None
