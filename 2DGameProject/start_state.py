@@ -12,7 +12,10 @@ def enter():
     global image
     open_canvas()
     image = load_image('resource/kpu_credit.png')
-
+    f = open('data/money_data.txt', 'w')
+    first_money_data = {'money': 300 }
+    json.dump(first_money_data, f)
+    f.close()
 
 def exit():
     global image

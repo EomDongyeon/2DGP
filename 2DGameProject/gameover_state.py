@@ -1,7 +1,7 @@
 import game_framework
-import score
 import stage1_play_state
 import itemshop_state
+
 from pico2d import *
 
 
@@ -11,6 +11,7 @@ from pico2d import *
 name = "GameOverState"
 bg_image = None
 board_image = None
+score_data = None
 select_image = None
 key_num = 0
 font = 0
@@ -24,7 +25,8 @@ def enter():
 
 
 def exit():
-    global bg_image, board_image, select_image
+    global bg_image, board_image, select_image, score_data
+    
     del(bg_image)
     del(board_image)
     del(select_image)
@@ -47,7 +49,7 @@ def handle_events(frame_time):
                 if(key_num == 0):
                     game_framework.change_state(itemshop_state)
                 else:
-                    game_framework.change_state(stage1_state)
+                    game_framework.change_state(stage1_play_state)
 
 def score_check(num):      # 게임 스코어 및 게임 머니 체크
     Num = []
@@ -60,7 +62,7 @@ def score_check(num):      # 게임 스코어 및 게임 머니 체크
     return Num
 
 def draw(frame_time):
-    global font, key_num
+    global font, key_num, score_data
     clear_canvas()
     bg_image.draw(400, 300)
     board_image.draw(400, 300)
