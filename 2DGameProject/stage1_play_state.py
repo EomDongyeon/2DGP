@@ -47,6 +47,7 @@ def pause():
 def resume():
     pass
 
+
 def handle_events(frame_time):
     global player, bg, stairs, up_key
     events = get_events()
