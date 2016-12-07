@@ -13,7 +13,7 @@ from timer import Timer
 from score import score_check
 
 name = "Stage2"
-s
+
 
 player = None
 stair = None

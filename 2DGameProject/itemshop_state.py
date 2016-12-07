@@ -5,7 +5,6 @@ import stage1_play_state
 
 from pico2d import *
 
-
 name = "ItemShopState"
 bg_image = None
 board_image = None
@@ -13,13 +12,11 @@ select_image = None
 key_num = 0
 font = 0
 
-
 def enter():
     global bg_image, board_image, select_image
     bg_image = load_image('resource/default_bg.png')
     board_image = load_image('resource/score_board.png')
     select_image = load_image('resource/sel.png')
-
 
 def exit():
     global bg_image, board_image, select_image
