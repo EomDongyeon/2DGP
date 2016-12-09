@@ -4,6 +4,7 @@ import random
 
 
 
+
 class Stair:
     LEFT_DIR, RIGHT_DIR = 0, 1
     i = 0

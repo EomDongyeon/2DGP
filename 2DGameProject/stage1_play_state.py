@@ -34,6 +34,7 @@ def enter():
     current_time = 0.0
     running = True
 
+
 def exit():
     global player, bg, stairs
     del(player)
