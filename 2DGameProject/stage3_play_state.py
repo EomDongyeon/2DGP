@@ -18,6 +18,7 @@ font = None
 up_key = False
 
 
+
 class Character:
     global player_score, up_key
     def __init__(self):
