@@ -10,6 +10,7 @@ image2 = None
 load_num = 0
 logo_time = 0.0
 
+
 def enter():
     global image1, image2
     image1 = load_image('resource/stage_1.png')

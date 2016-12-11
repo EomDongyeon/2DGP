@@ -3,7 +3,6 @@ import stage1_play_state
 
 from pico2d import *
 
-
 name = "Stage1_Intro"
 image1 = None
 image2 = None

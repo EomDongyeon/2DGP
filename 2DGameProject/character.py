@@ -4,7 +4,6 @@ from stair import Stair
 import game_framework
 import gameover_state
 
-
 class Character:
     image = None
     die_image = None
