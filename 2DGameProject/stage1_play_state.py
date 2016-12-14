@@ -25,6 +25,7 @@ main_time = 0.0
 current_time = 0.0
 
 
+
 def enter():
     global player, bg, stairs, timer, main_time
     bg = Background()
