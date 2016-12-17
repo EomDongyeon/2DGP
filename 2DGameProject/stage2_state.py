@@ -15,6 +15,7 @@ from score import score_check
 name = "Stage2"
 
 
+
 player = None
 stair = None
 stairs = None

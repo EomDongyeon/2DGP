@@ -16,6 +16,7 @@ def enter():
     image2 = load_image('resource/stage_2-2.png')
 
 
+
 def exit():
     global image1, image2
     del(image1)
