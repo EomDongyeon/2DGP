@@ -13,7 +13,7 @@ class Character:
     player_score = 0
     die_state = False
     dead_time = 0.0
-
+    life_state = False
     DIE, RIGHT_RUN, LEFT_RUN, RIGHT_STAND, LEFT_STAND = 0, 1, 2, 3, 4
     PIXEL_PER_METER = (10.0 / 0.3)
     RUN_SPEED_KMPH = 20.0
@@ -78,11 +78,13 @@ class Character:
             if (Character.jump_key == True):
                 Character.jump_key = False
                 self.state = Character.RIGHT_STAND
-        print(self.frame)
 
     def change_dir(self, stairs):
             self.dir *= -1
     def jump(self, frame_time, stairs):
+        self.bgm2 = load_wav('resource/sound/walk_sound.wav')
+        self.bgm2.set_volume(64)
+        self.bgm2.play(1)
         if(stairs[Character.player_score].dir == self.dir):
             if(self.dir == -1):
                 self.state = Character.LEFT_RUN
@@ -93,39 +95,51 @@ class Character:
 
             self.y = stairs[Character.player_score].y + 60
         else:
-            self.y = stairs[Character.player_score].y + 60
-            Character.player_score -= 1
-            if (self.dir == -1):
-                Character.die_state = True
-                self.state = Character.DIE
-                self.frame = 0
-                self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
-                self.die(stairs)
-                self.bgm1 = load_music('resource/sound/game_over.mp3')
-                self.bgm1.set_volume(64)
-                self.bgm1.play(1)
+            if(Character.life_state == True):
+                Character.player_score -= 1
+                self.dir = stairs[Character.player_score].dir
+                Character.life_state = False
+                f = open('data/player_info_data.txt', 'r')
+                info_data = json.load(f)
+                f.close()
+                info_data[-1]['item_life'] = False
+                f = open('data/player_info_data.txt', 'w')
+                json.dump(info_data, f)
+                f.close()
             else:
-                Character.die_state = True
-                self.state = Character.DIE
-                self.frame = 0
-                self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
-                self.die(stairs)
-                self.bgm1 = load_music('resource/sound/game_over.mp3')
-                self.bgm1.set_volume(64)
-                self.bgm1.play(1)
+                self.y = stairs[Character.player_score].y + 60
+                Character.player_score -= 1
+                if (self.dir == -1):
+                    Character.die_state = True
+                    self.state = Character.DIE
+                    self.frame = 0
+                    self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
+                    self.die(stairs)
+                    self.bgm1 = load_wav('resource/sound/game_over.wav')
+                    self.bgm1.set_volume(30)
+                    self.bgm1.play(1)
+                else:
+                    Character.die_state = True
+                    self.state = Character.DIE
+                    self.frame = 0
+                    self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
+                    self.die(stairs)
+                    self.bgm1 = load_wav('resource/sound/game_over.wav')
+                    self.bgm1.set_volume(30)
+                    self.bgm1.play(1)
     def die(self, stairs):
         if(Character.dead_time >= 0.5):
             Character.dead_time = 0
-            # 파일 출력
-            f = open('data/score_data.txt', 'r')
-            score_data = json.load(f)
-            f.close()
 
-            score_data.append({'score': Character.player_score})
+            # 파일 출력
+            f = open('data/player_info_data.txt', 'r')
+            info_data = json.load(f)
+            f.close()
+            info_data[-1]['score1'] = Character.player_score
 
             # 파일 쓰기
-            f = open('data/score_data.txt', 'w')
-            json.dump(score_data, f)
+            f = open('data/player_info_data.txt', 'w')
+            json.dump(info_data, f)
             f.close()
 
             self.reset(stairs)

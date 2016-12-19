@@ -10,35 +10,30 @@ bg_image = None
 board_image = None
 select_image = None
 coin_image = None
-total_money_data = None
-total_money = 0
+coin_sound = None
+info_data = None
 key_num = 0
 font = 0
 
 def enter():
-    global bg_image, board_image, select_image, coin_image, total_money, total_money_data
+    global bg_image, board_image, select_image, coin_image,info_data
     bg_image = load_image('resource/default_bg.png')
     board_image = load_image('resource/store_menu.png')
     select_image = load_image('resource/sel.png')
     coin_image = load_image('resource/coin.png')
 
-    f = open('data/money_data.txt', 'r')
-    money_data = json.load(f)
+    f = open('data/player_info_data.txt', 'r')
+    info_data = json.load(f)
     f.close()
 
-    f = open('data/score_data.txt', 'r')
-    score_data = json.load(f)
+    info_data[-1]['money'] += info_data[-1]['score1']
+
+    f = open('data/player_info_data.txt', 'w')
+    json.dump(info_data, f)
     f.close()
 
-    total_money = money_data['money'] + score_data[-1]['score']
-
-    f = open('data/money_data.txt', 'w')
-    total_money_data = {'money': total_money}
-    json.dump(total_money_data, f)
-    f.close()
-
-    f = open('data/money_data.txt', 'r')
-    total_money_data = json.load(f)
+    f = open('data/player_info_data.txt', 'r')
+    info_data = json.load(f)
     f.close()
 
 
@@ -68,27 +63,55 @@ def handle_events(frame_time):
             if event.key == SDLK_SPACE:
                 if (key_num == 0):
                     # 아이템구입 생명력
-                    purchase(key_num)
+                    item_purchase(key_num)
                 if (key_num == 1):
                     # 아이템구입 시간멈추기
-                    purchase(key_num)
+                    item_purchase(key_num)
                 elif(key_num == 2):
                     game_framework.change_state(stage1_intro_state)
                 elif(key_num == 3):
                     game_framework.change_state(stage1_intro_state)
 
-def purchase(key_num):
-    pass
+def item_purchase(key_num):
+    global coin_sound
+    coin_sound = load_music('resource/sound/coin_sound.wav')
+    coin_sound.set_volume(64)
+
+    f = open('data/player_info_data.txt', 'r')
+    info_data = json.load(f)
+    f.close()
+
+    if(key_num == 0): # 생명력
+        if(info_data[-1]['item_life'] == False):
+            coin_sound.play(1)
+            info_data[-1]['money'] -= 100
+            info_data[-1]['item_life'] = True
+    elif(key_num == 1): # 시간멈추기
+        if (info_data[-1]['item_stop'] == False):
+            coin_sound.play(1)
+            info_data[-1]['money'] -= 100
+            info_data[-1]['item_stop'] = True
+
+    f = open('data/player_info_data.txt', 'w')
+    json.dump(info_data, f)
+    f.close()
+
+
+
 
 def draw(frame_time):
-    global font, key_num, total_money_data
+    global font, key_num, info_data
     clear_canvas()
     bg_image.draw(400, 300)
     board_image.draw(400, 300)
     coin_image.draw(320, 380)
 
+    f = open('data/player_info_data.txt', 'r')
+    info_data = json.load(f)
+    f.close()
+
     font = load_font('resource/Typo_SsangmunDongB.TTF', 50)
-    font.draw(355, 380, "%d" % (total_money_data['money']) , (0, 0, 0))
+    font.draw(355, 380, "%d" % (info_data[-1]['money']) , (0, 0, 0))
 
     if(key_num == 0):
         select_image.draw(330, 220)

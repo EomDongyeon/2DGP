@@ -1,9 +1,9 @@
 import game_framework
-import stage1_play_state
+import stage3_play_state
 
 from pico2d import *
 
-name = "Stage1_Intro"
+name = "Stage3_Intro"
 image1 = None
 image2 = None
 load_num = 0

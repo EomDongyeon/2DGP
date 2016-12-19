@@ -67,12 +67,17 @@ def draw(frame_time):
     bg_image.draw(400, 300)
     board_image.draw(400, 300)
 
-    f = open('data/score_data.txt', 'r')
-    score_data = json.load(f)
+    f = open('data/player_info_data.txt', 'r')
+    info_data = json.load(f)
     f.close()
 
     font = load_font('resource/Typo_SsangmunDongB.TTF', 50)
-    font.draw(380, 340, "%d" % (score_data[-1]['score']) , (0, 0, 0))
+    if(info_data[-1]['stage'] == 1):
+        font.draw(380, 340, "%d" % (info_data[-1]['score1']) , (0, 0, 0))
+    elif(info_data[-1]['stage'] == 2):
+        font.draw(380, 340, "%d" % (info_data[-1]['score2']) , (0, 0, 0))
+    elif(info_data[-1]['stage'] == 3):
+        font.draw(380, 340, "%d" % (info_data[-1]['score3']) , (0, 0, 0))
 
     if(key_num == 0):
         select_image.draw(320, 170)

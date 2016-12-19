@@ -17,6 +17,19 @@ def enter():
     json.dump(first_money_data, f)
     f.close()
 
+    # 파일 출력
+    f = open('data/player_info_data.txt', 'r')
+    info_data = json.load(f)
+    f.close()
+
+    info_data.append({'stage': 1, 'score1': 0, 'score2': 0, 'score3': 0, 'money': 300, 'item_life': False, 'item_stop': False })
+
+    # 파일 쓰기
+    f = open('data/player_info_data.txt', 'w')
+    json.dump(info_data, f)
+    f.close()
+
+
 def exit():
     global image
     del(image)

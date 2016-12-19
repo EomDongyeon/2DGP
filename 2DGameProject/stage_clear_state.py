@@ -1,20 +1,21 @@
 import game_framework
-import stage1_state
+import stage2_intro_state
+import stage3_intro_state
 
 from pico2d import *
 
 
-name = "Stage2_Intro"
+name = "Stage1_Clear"
 image1 = None
 image2 = None
 load_num = 0
 logo_time = 0.0
 
+
 def enter():
     global image1, image2
-    image1 = load_image('resource/stage_2.png')
-    image2 = load_image('resource/stage_2-2.png')
-
+    image1 = load_image('resource/stage_1.png')
+    image2 = load_image('resource/stage_clear.png')
 
 
 def exit():
@@ -31,7 +32,7 @@ def update(frame_time):
         load_num = 1
     elif (logo_time > 1.5):
         logo_time = 0
-        game_framework.push_state(stage1_state)
+        game_framework.push_state(stage2_intro_state)
 
     delay(0.01)
     logo_time += 0.01
