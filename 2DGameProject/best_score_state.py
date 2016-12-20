@@ -1,6 +1,5 @@
 import game_framework
 import home_state
-import intinity_itemshop_state
 from sound import GameSound
 from pico2d import *
 
@@ -53,19 +52,12 @@ def handle_events(frame_time):
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
-            if event.key == SDLK_LEFT: # 아이템샵
-                key_num = 0
-            if event.key == SDLK_RIGHT: # 게임시작
-                key_num = 1
             if event.key == SDLK_SPACE:
                 select_sound = load_wav('resource/sound/itemize.wav')
                 select_sound.set_volume(50)
                 select_sound.play(1)
                 delay(0.3)
-                if(key_num == 0):
-                    game_framework.change_state(intinity_itemshop_state)
-                else:
-                    game_framework.change_state(home_state)
+                game_framework.change_state(home_state)
 
 
 def score_check(num):      # 게임 스코어 및 게임 머니 체크
@@ -88,10 +80,7 @@ def draw(frame_time):
     font.draw(380, 340, "%d" % (infinity_player_data[-1]['score']), (0, 0, 0))
     font.draw(380, 220, "%d" % (best_score_data['best_score']), (0, 0, 0))
 
-    if(key_num == 0):
-        select_image.draw(320, 140)
-    elif(key_num == 1):
-         select_image.draw(520, 140)
+    select_image.draw(380, 120)
 
     update_canvas()
 

@@ -33,7 +33,7 @@ def enter():
     global player, bg, stairs, timer, current_time, main_time, item, best_score
     bg = Background()
     item = Item()
-    stairs = [Stair() for i in range(10)]
+    stairs = [Stair() for i in range(20)]
     player = Character(stairs)
     Character.infinity_state = True
     timer = Timer()
@@ -91,7 +91,7 @@ def handle_events(frame_time):
                 if(Timer.time_state == Timer.TIME_ACTIVATION):
                     Timer.total_gauge += 10
                 Character.player_score += 1
-                if (Character.player_score < 100):
+                if (Character.player_score < 500):
                     current_time = get_time()
                     frame_time = get_frame_time(frame_time)
                     player.jump(frame_time, stairs)
@@ -104,7 +104,7 @@ def handle_events(frame_time):
                 Character.player_score += 1
                 if(Timer.time_state == Timer.TIME_ACTIVATION):
                     Timer.total_gauge += 10
-                if (Character.player_score < 100):
+                if (Character.player_score < 500):
                     player.change_dir(stairs)
                     current_time = get_time()
                     frame_time = get_frame_time(frame_time)
@@ -156,16 +156,14 @@ def update(frame_time):
         stair.update()
 
     print("계단 %d" % Stair.i)
-    if(Character.player_score >= ((Stair.i / 2) - 1)):
+    if(Character.player_score >= ((Stair.i / 2) - 15)):
         for i in range(100):
             stairs.append(Stair())
 
     player.update(frame_time,stairs)
     timer.update()
 
-    if (Character.player_score >= 799):
-        # 계단 추가하기.
-        pass
+
 
 
 

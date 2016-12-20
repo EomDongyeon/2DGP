@@ -46,12 +46,8 @@ def handle_events(frame_time):
                 if(key_num > 0):
                     key_num -= 1
             if (event.key == SDLK_DOWN or event.key == SDLK_RIGHT) : # 게임시작
-                if (key_num < 2):
+                if (key_num < 3):
                     key_num += 1
-            if event.key == SDLK_F1:
-                GameSound.sound_state = GameSound.BG
-                sound.play(GameSound.BG)
-                game_framework.push_state(stage_infinity_intro_state)
             if event.key == SDLK_SPACE:
                 select_sound = load_wav('resource/sound/itemize.wav')
                 select_sound.set_volume(50)
@@ -65,6 +61,10 @@ def handle_events(frame_time):
                     game_framework.push_state(itemshop_state)
                 elif(key_num == 2):
                     game_framework.push_state(tutorial_state)
+                elif (key_num == 3):
+                    GameSound.sound_state = GameSound.BG
+                    sound.play(GameSound.BG)
+                    game_framework.push_state(stage_infinity_intro_state)
 
 
 def draw(frame_time):
@@ -73,11 +73,13 @@ def draw(frame_time):
     bg_image.draw(400, 300)
 
     if(key_num == 0):
-        select_image.draw(400, 360)
+        select_image.draw(400, 400)
     elif(key_num == 1):
-         select_image.draw(400, 260)
+         select_image.draw(400, 300)
     elif(key_num == 2):
-         select_image.draw(400, 160)
+         select_image.draw(400, 190)
+    elif(key_num == 3):
+         select_image.draw(400, 100)
 
     update_canvas()
 

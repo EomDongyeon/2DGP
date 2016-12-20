@@ -3,7 +3,7 @@ import stage1_intro_state
 import stage2_intro_state
 import stage3_intro_state
 import home_state
-
+from sound import GameSound
 from pico2d import *
 
 
@@ -14,6 +14,7 @@ select_image = None
 coin_image = None
 coin_sound = None
 info_data = None
+sound = GameSound()
 key_num = 0
 font = 0
 
@@ -67,9 +68,8 @@ def handle_events(frame_time):
                     delay(0.3)
                     game_framework.change_state(home_state)
                 elif(key_num == 3):
-                    select_sound.play(1)
-                    delay(0.3)
-
+                    GameSound.sound_state = GameSound.BG
+                    sound.play(GameSound.BG)
                     if (info_data[-1]['stage'] == 1):
                         game_framework.change_state(stage1_intro_state)
                     elif (info_data[-1]['stage'] == 2):
