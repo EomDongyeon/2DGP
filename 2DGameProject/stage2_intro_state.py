@@ -1,12 +1,13 @@
 import game_framework
 import stage2_play_state
-
+from sound import GameSound
 from pico2d import *
 
 
-name = "Stage2_Intro"
+name = "Stage2_Intro_State"
 image1 = None
 image2 = None
+sound = GameSound()
 load_num = 0
 logo_time = 0.0
 
@@ -14,7 +15,8 @@ def enter():
     global image1, image2
     image1 = load_image('resource/stage_2.png')
     image2 = load_image('resource/stage_2-2.png')
-
+    GameSound.sound_state = GameSound.BG
+    sound.play(GameSound.BG)
 
 
 def exit():

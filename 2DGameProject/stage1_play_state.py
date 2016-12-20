@@ -33,9 +33,11 @@ def enter():
     global player, bg, stairs, timer, current_time, main_time, item
     bg = Background()
     item = Item()
-    stairs = [Stair() for i in range(100)]
+    stairs = [Stair() for i in range(30)]
     player = Character(stairs)
+    Character.infinity_state = False
     timer = Timer()
+    timer.reset()
     main_time = 0.0
     current_time = 0.0
     running = True
@@ -115,6 +117,8 @@ def handle_events(frame_time):
                 f = open('data/player_info_data.txt', 'w')
                 json.dump(info_data, f)
                 f.close()
+            if event.key == SDLK_F5:
+                Character.invincibility_mode = True
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_q:
@@ -140,7 +144,15 @@ def update(frame_time):
     player.update(frame_time,stairs)
     timer.update()
 
-    if (Character.player_score >= 40):
+    if (Character.player_score >= 29):
+        f = open('data/player_info_data.txt', 'r')
+        info_data = json.load(f)
+        f.close()
+        info_data[-1]['stage'] = 2
+        info_data[-1]['score1'] = Character.player_score
+        f = open('data/player_info_data.txt', 'w')
+        json.dump(info_data, f)
+        f.close()
         Character.player_score = 0
         Stair.i = 0
         Stair.num = 0
@@ -157,7 +169,10 @@ def draw(frame_time):
     bg.draw(1)
 
     for stair in stairs:
-        stair.draw()
+        if(stair.num == 29):
+            stair.draw(1)
+        else:
+            stair.draw(0)
 
     player.draw()
     timer.draw()

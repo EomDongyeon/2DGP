@@ -1,6 +1,8 @@
 import game_framework
-import score
 import stage1_intro_state
+import stage2_intro_state
+import stage3_intro_state
+import home_state
 
 from pico2d import *
 
@@ -22,15 +24,6 @@ def enter():
     select_image = load_image('resource/sel.png')
     coin_image = load_image('resource/coin.png')
 
-    f = open('data/player_info_data.txt', 'r')
-    info_data = json.load(f)
-    f.close()
-
-    info_data[-1]['money'] += info_data[-1]['score1']
-
-    f = open('data/player_info_data.txt', 'w')
-    json.dump(info_data, f)
-    f.close()
 
     f = open('data/player_info_data.txt', 'r')
     info_data = json.load(f)
@@ -46,7 +39,7 @@ def exit():
 
 
 def handle_events(frame_time):
-    global key_num
+    global key_num, info_data
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -61,6 +54,8 @@ def handle_events(frame_time):
                 if (key_num < 4):
                  key_num += 1
             if event.key == SDLK_SPACE:
+                select_sound = load_wav('resource/sound/itemize.wav')
+                select_sound.set_volume(50)
                 if (key_num == 0):
                     # 아이템구입 생명력
                     item_purchase(key_num)
@@ -68,13 +63,25 @@ def handle_events(frame_time):
                     # 아이템구입 시간멈추기
                     item_purchase(key_num)
                 elif(key_num == 2):
-                    game_framework.change_state(stage1_intro_state)
+                    select_sound.play(1)
+                    delay(0.3)
+                    game_framework.change_state(home_state)
                 elif(key_num == 3):
-                    game_framework.change_state(stage1_intro_state)
+                    select_sound.play(1)
+                    delay(0.3)
+
+                    if (info_data[-1]['stage'] == 1):
+                        game_framework.change_state(stage1_intro_state)
+                    elif (info_data[-1]['stage'] == 2):
+                        info_data[-1]['money'] += info_data[-1]['score2']
+                        game_framework.change_state(stage2_intro_state)
+                    elif (info_data[-1]['stage'] == 3):
+                        info_data[-1]['money'] += info_data[-1]['score3']
+                        game_framework.change_state(stage3_intro_state)
 
 def item_purchase(key_num):
     global coin_sound
-    coin_sound = load_music('resource/sound/coin_sound.wav')
+    coin_sound = load_wav('resource/sound/coin_sound.wav')
     coin_sound.set_volume(64)
 
     f = open('data/player_info_data.txt', 'r')

@@ -6,6 +6,8 @@ class Background:
     image1_2 = None
     image2_1 = None
     image2_2 = None
+    image3_1 = None
+    image3_2 = None
     def __init__(self):
         self.w, self.h = 800, 600
         self.bg1_X, self.bg1_Y = 0, 0
@@ -18,6 +20,10 @@ class Background:
             self.image2_1 = load_image('resource/stage_2.png')
         if Background.image2_2 == None:
             self.image2_2 = load_image('resource/stage_2-3.png')
+        if Background.image3_1 == None:
+            self.image3_1 = load_image('resource/stage_3.png')
+        if Background.image3_2 == None:
+            self.image3_2 = load_image('resource/stage_3-3.png')
     def bg_moveY(self):
         if(self.bg1_Y >= -600):
             self.bg1_Y -= 50
@@ -36,4 +42,8 @@ class Background:
             self.image2_2.clip_draw(0, 0, 800, 1200, self.bg2_X + 400, self.bg2_Y)
             if(Background.image_flag == True):
                self.image2_1.clip_draw(0, 0, 800, 600, self.bg1_X + 400, self.bg1_Y + 300)
+        elif (stage_num == 3):
+             self.image3_2.clip_draw(0, 0, 800, 1200, self.bg2_X + 400, self.bg2_Y)
+             if (Background.image_flag == True):
+                 self.image3_1.clip_draw(0, 0, 800, 600, self.bg1_X + 400, self.bg1_Y + 300)
         #self.image2.clip_draw(0,0,800,600,400,300)

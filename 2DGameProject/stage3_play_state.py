@@ -1,88 +1,58 @@
+from pico2d import *
+
 import random
 import json
 import os
-
-from pico2d import *
-
 import game_framework
-import title_state
+import stage_win_state
+import gameover_state
 
+# import class
+from character import Character # import Boy class from boy.py
+from stair import Stair
+from background import Background
+from item import Item
+from timer import Timer
 
-
-name = "MainState_3"
+name = "Stage1"
 
 player = None
 stair = None
+stairs = None
+timer = None
+item = None
 bg = None
 font = None
 up_key = False
-
-
-
-class Character:
-    global player_score, up_key
-    def __init__(self):
-        self.x, self.y = 400, 100
-        self.frame = 0
-        self.image = load_image('character_sprite_02.png')
-    def update(self):
-        self.frame = (self.frame + 1) % 7
-    def draw(self):
-        if stairs[player_score].dir == -1:
-            self.state = 1
-        else:
-             self.state = 0
-        self.image.clip_draw(self.frame * 100, self.state * 214,100,214,self.x,self.y)
-
-class Background:
-    image = None
-    def __init__(self):
-        self.x, self.y = 0, 0
-        if Background.image == None:
-            self.image = load_image('stage_3.png')
-    def draw(self):
-        self.image.clip_draw(0,0,800,600,400,300)
-
-class Stair:
-    LEFT_DIR, RIGHT_DIR = 0, 1
-    i = 0
-    x,y = 400, 20
-    image = None
-    def __init__(self):
-        self.num = Stair.i
-        self.x,y = Stair.x, Stair.y
-        rdir = random.randint(0,1)
-        if rdir == 0:
-            rdir = -1
-        self.dir = rdir
-        self.x = self.x + ((self.dir * -1) * 51)
-        self.y = self.y + 27
-        if Stair.image == None:
-            Stair.image = load_image('stair.png')
-        Stair.i += 1
-        Stair.x,Stair.y = self.x, self.y
-    def update(self):
-        self.x = self.x - 51
-    def draw(self):
-        self.image.clip_draw(0,0,50,27,self.x,self.y)
+main_time = 0.0
+current_time = 0.0
 
 
 def enter():
-    global player, bg, stair, stairs, player_score
+    global player, bg, stairs, timer, current_time, main_time, item
     bg = Background()
-    player = Character()
-    stair = Stair()
-    stairs = [Stair() for i in range(20)]
+    item = Item()
+    stairs = [Stair() for i in range(120)]
+    player = Character(stairs)
+    Character.infinity_state = False
+    timer = Timer()
+    timer.reset()
+    main_time = 0.0
+    current_time = 0.0
     running = True
-    player_score = -1
-
+    f = open('data/player_info_data.txt', 'r')
+    info_data = json.load(f)
+    f.close()
+    if(info_data[-1]['item_life'] == True):
+        Character.life_state = True
 
 def exit():
-    global player, bg, stair
+    global player, bg, stairs, timer, current_time, main_time, item
     del(player)
     del(bg)
-    del(stair)
-
+    del(stairs)
+    del(item)
+    #del(timer)
 
 def pause():
     pass
@@ -90,9 +60,9 @@ def pause():
 def resume():
     pass
 
-def handle_events():
-    global player_score
-    global up_key
+
+def handle_events(frame_time):
+    global player, bg, stairs, up_key
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -100,41 +70,120 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
-            if event.key == 'Q' or 'q':
-                pass  # 방향전환
-            if event.key == SDLK_SPACE:
-                up_key = True
-                player_score += 1
-                if player_score >= 20:
-                    game_framework.change_state(title_state)
+            if event.key == SDLK_q:
+                if(Timer.time_state == Timer.TIME_ACTIVATION):
+                    Timer.total_gauge += 10
+                Character.player_score += 1
+                if (Character.player_score < 150):
+                    current_time = get_time()
+                    frame_time = get_frame_time(frame_time)
+                    player.jump(frame_time, stairs)
+                    if (Character.player_score >= 5):
+                        bg.bg_moveY()
+                        for stair in stairs:
+                            stair.moveY()
+                        player.moveY(stairs)
+            if event.key == SDLK_w: #방향전환
+                Character.player_score += 1
+                if(Timer.time_state == Timer.TIME_ACTIVATION):
+                    Timer.total_gauge += 10
+                if (Character.player_score < 150):
+                    player.change_dir(stairs)
+                    current_time = get_time()
+                    frame_time = get_frame_time(frame_time)
+                    player.jump(frame_time, stairs)
+                    if (Character.player_score >= 5):
+                        bg.bg_moveY()
+                        for stair in stairs:
+                            stair.moveY()
+                        player.moveY(stairs)
+            if event.key == SDLK_F1:
+                f = open('data/player_info_data.txt', 'r')
+                info_data = json.load(f)
+                f.close()
+                info_data[-1]['item_life'] = False
+                f = open('data/player_info_data.txt', 'w')
+                json.dump(info_data, f)
+                f.close()
 
-def update():
-    global stairs
-    global player_score
-    global up_key
-    if up_key == True:
-        player.x, player.y = stairs[player_score].x, stairs[player_score].y + 100
-        player.update()
-        player.frame
-        if player.frame >= 6:
-            up_key = False
+            if event.key == SDLK_F2:
+                f = open('data/player_info_data.txt', 'r')
+                info_data = json.load(f)
+                f.close()
+                if(info_data[-1]['item_stop'] == True):
+                    Timer.time_state = Timer.TIME_STOP
+                    info_data[-1]['item_stop'] = False
+                f = open('data/player_info_data.txt', 'w')
+                json.dump(info_data, f)
+                f.close()
 
-def draw():
-    global stairs
-    global up_key
+        elif event.type == SDL_KEYUP:
+            if event.key == SDLK_q:
+                Character.jump_key = True
+            if event.key == SDLK_w:
+                Character.jump_key = True
+
+current_time = 0.0
+
+def get_frame_time(frame_time):
+    global current_time
+    frame_time = get_time() - current_time
+    current_time += frame_time
+    return frame_time
+
+
+def update(frame_time):
+    global main_time,stairs,player,bg
+    main_time += 0.05
+    for stair in stairs:
+        stair.update()
+
+    player.update(frame_time,stairs)
+    timer.update()
+
+    if (Character.player_score >= 119):
+        f = open('data/player_info_data.txt', 'r')
+        info_data = json.load(f)
+        f.close()
+        info_data[-1]['stage'] = 1
+        info_data[-1]['score3'] = Character.player_score
+        f = open('data/player_info_data.txt', 'w')
+        json.dump(info_data, f)
+        f.close()
+        Character.player_score = 0
+        Stair.i = 0
+        Stair.num = 0
+        Stair.x, Stair.y = 400, 20
+        Stair.image = None
+        Character.die_state = False
+        player.reset(stairs)
+        game_framework.change_state(stage_win_state)
+        Character.invincibility_mode = False
+
+
+def draw(frame_time):
+    global stair, stairs, up_key, player, cnt_time, timer, item
     clear_canvas()
-    bg.draw()
+    bg.draw(3)
 
     for stair in stairs:
-        stair.draw()
+        if(stair.num == 119):
+            stair.draw(1)
+        else:
+            stair.draw(0)
 
     player.draw()
+    timer.draw()
+    item.draw()
 
-    font = load_font('ENCR10B.TTF', 30)
-    font.draw(600, 570, "SCORE: %d" % (player_score + 1) , (0, 0, 0))
+    font = load_font('resource/Typo_SsangmunDongB.TTF', 30)
+    font.draw(20, 570, "SCORE: %d" % (Character.player_score) , (0, 0, 0))
 
     update_canvas()
+
     delay(0.05)
+
+
 
 
 

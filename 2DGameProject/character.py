@@ -1,10 +1,13 @@
 from pico2d import *
 from stair import Stair
+from sound import GameSound
 
 import game_framework
 import gameover_state
+import best_score_state
+import best_score_intro_state
 
-
+sound = GameSound()
 
 class Character:
     image = None
@@ -12,6 +15,8 @@ class Character:
     jump_key = False
     player_score = 0
     die_state = False
+    infinity_state = False
+    invincibility_mode = False
     dead_time = 0.0
     life_state = False
     DIE, RIGHT_RUN, LEFT_RUN, RIGHT_STAND, LEFT_STAND = 0, 1, 2, 3, 4
@@ -82,6 +87,7 @@ class Character:
     def change_dir(self, stairs):
             self.dir *= -1
     def jump(self, frame_time, stairs):
+        global sound
         self.bgm2 = load_wav('resource/sound/walk_sound.wav')
         self.bgm2.set_volume(64)
         self.bgm2.play(1)
@@ -95,38 +101,44 @@ class Character:
 
             self.y = stairs[Character.player_score].y + 60
         else:
-            if(Character.life_state == True):
+            if(Character.invincibility_mode == True):
                 Character.player_score -= 1
                 self.dir = stairs[Character.player_score].dir
-                Character.life_state = False
-                f = open('data/player_info_data.txt', 'r')
-                info_data = json.load(f)
-                f.close()
-                info_data[-1]['item_life'] = False
-                f = open('data/player_info_data.txt', 'w')
-                json.dump(info_data, f)
-                f.close()
             else:
-                self.y = stairs[Character.player_score].y + 60
-                Character.player_score -= 1
-                if (self.dir == -1):
-                    Character.die_state = True
-                    self.state = Character.DIE
-                    self.frame = 0
-                    self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
-                    self.die(stairs)
-                    self.bgm1 = load_wav('resource/sound/game_over.wav')
-                    self.bgm1.set_volume(30)
-                    self.bgm1.play(1)
+                if(Character.life_state == True):
+                    Character.player_score -= 1
+                    self.dir = stairs[Character.player_score].dir
+                    if (self.dir == -1):
+                        self.state = Character.LEFT_RUN
+                    else:
+                        self.state = Character.RIGHT_RUN
+                    Character.life_state = False
+                    f = open('data/player_info_data.txt', 'r')
+                    info_data = json.load(f)
+                    f.close()
+                    info_data[-1]['item_life'] = False
+                    f = open('data/player_info_data.txt', 'w')
+                    json.dump(info_data, f)
+                    f.close()
                 else:
-                    Character.die_state = True
-                    self.state = Character.DIE
-                    self.frame = 0
-                    self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
-                    self.die(stairs)
-                    self.bgm1 = load_wav('resource/sound/game_over.wav')
-                    self.bgm1.set_volume(30)
-                    self.bgm1.play(1)
+                    self.y = stairs[Character.player_score].y + 60
+                    Character.player_score -= 1
+                    if (self.dir == -1):
+                        Character.die_state = True
+                        self.state = Character.DIE
+                        self.frame = 0
+                        self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
+                        self.die(stairs)
+                        GameSound.sound_state = GameSound.OVER
+                        sound.play(GameSound.OVER)
+                    else:
+                        Character.die_state = True
+                        self.state = Character.DIE
+                        self.frame = 0
+                        self.x = (stairs[Character.player_score + 1].x) + ((self.dir * -1) * 51)
+                        self.die(stairs)
+                        GameSound.sound_state = GameSound.OVER
+                        sound.play(GameSound.OVER)
     def die(self, stairs):
         if(Character.dead_time >= 0.5):
             Character.dead_time = 0
@@ -135,21 +147,51 @@ class Character:
             f = open('data/player_info_data.txt', 'r')
             info_data = json.load(f)
             f.close()
-            info_data[-1]['score1'] = Character.player_score
+            if(info_data[-1]['stage'] == 1):
+                info_data[-1]['score1'] = Character.player_score
+            if (info_data[-1]['stage'] == 2):
+                info_data[-1]['score2'] = Character.player_score
+            if (info_data[-1]['stage'] == 3):
+                info_data[-1]['score3'] = Character.player_score
 
             # 파일 쓰기
             f = open('data/player_info_data.txt', 'w')
             json.dump(info_data, f)
             f.close()
 
-            self.reset(stairs)
             Stair.i = 0
             Stair.num = 0
             Stair.x, Stair.y = 400, 20
             Stair.image = None
             Character.die_state = False
             delay(3.3)
-            game_framework.change_state(gameover_state)
+            if(Character.infinity_state == False):
+                game_framework.change_state(gameover_state)
+            else:
+                f = open('data/best_score_data.txt', 'r')
+                best_score_data = json.load(f)
+                f.close()
+
+                f = open('data/infinity_player_data.txt', 'r')
+                infinity_player_data = json.load(f)
+                f.close()
+                infinity_player_data[-1]['score'] = Character.player_score
+
+                f = open('data/infinity_player_data.txt', 'w')
+                json.dump(infinity_player_data, f)
+                f.close()
+
+                if(Character.player_score > best_score_data['best_score']):
+                    f = open('data/best_score_data.txt', 'w')
+                    best_score_data['best_score'] = Character.player_score
+                    json.dump(best_score_data, f)
+                    f.close()
+                    game_framework.change_state(best_score_intro_state)
+                else:
+                    game_framework.change_state(best_score_state)
+            #캐릭터 초기화
+            self.reset(stairs)
+
 
     def moveY(self, stairs):
         self.y = stairs[Character.player_score].y + 60

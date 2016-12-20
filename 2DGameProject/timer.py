@@ -9,7 +9,7 @@ class Timer:
     frame_image = None
     gauge_image = None
     gauge_stop_image = None
-    time_speed = 10
+    time_speed = 20
     time_state = TIME_ACTIVATION
     def __init__(self):
         self.x, self.y = 400, 570
@@ -20,6 +20,22 @@ class Timer:
             self.gauge_image = load_image('resource/time_gauge.png')
         if Timer.gauge_stop_image == None:
             self.gauge_stop_image = load_image('resource/time_gauge_stop.png')
+    def reset(self):
+        f = open('data/player_info_data.txt', 'r')
+        info_data = json.load(f)
+        f.close()
+        if(info_data[-1]['stage'] == 1):
+            Timer.time_speed = 20
+        elif(info_data[-1]['stage'] == 2):
+            Timer.time_speed = 40
+        elif(info_data[-1]['stage'] == 3):
+            Timer.time_speed = 60
+        self.x, self.y = 400, 570
+        Timer.cnt_time = 0.0
+        Timer.cnt_time2 = 30.0
+        Timer.total_gauge = 290.0
+        Timer.time_state = Timer.TIME_ACTIVATION
+
     def update(self):
         if(Timer.time_state == Timer.TIME_STOP):
             Timer.cnt_time2 -= 0.5
@@ -41,7 +57,10 @@ class Timer:
             self.gauge_stop_image.clip_draw(0, 0, 51, 26, self.x, self.y)
 
         if(Timer.total_gauge <= 0):
-            self.bgm1 = load_music('resource/sound/game_over.wav')
-            self.bgm1.set_volume(10)
-            self.bgm1.play(1)
-            Character.die_state = True
+            if(Character.invincibility_mode == True):
+                pass
+            else:
+                self.bgm1 = load_music('resource/sound/game_over.wav')
+                self.bgm1.set_volume(10)
+                self.bgm1.play(1)
+                Character.die_state = True

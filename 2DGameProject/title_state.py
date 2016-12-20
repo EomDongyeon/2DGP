@@ -1,17 +1,17 @@
 import game_framework
-import stage1_intro_state
+import home_state
+from sound import GameSound
 from pico2d import *
 
 
 name = "TitleState"
 image = None
-bgm = None
+sound = GameSound()
 
 def enter():
     global image, bgm
-    bgm = load_music('resource/sound/bgm.mp3')
-    bgm.set_volume(10)
-    bgm.repeat_play()
+    GameSound.sound_state = GameSound.BG
+    sound.play(GameSound.BG)
     image = load_image('resource/title.png')
 
 
@@ -29,7 +29,7 @@ def handle_events(frame_time):
             if(event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
                 game_framework.quit()
             elif(event.type, event.key) == (SDL_KEYDOWN, SDLK_SPACE):
-                game_framework.push_state(stage1_intro_state)
+                game_framework.push_state(home_state)
 
 
 
