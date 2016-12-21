@@ -1,1 +1,1 @@
-{"best_score": 16}
+{"best_score": 0}

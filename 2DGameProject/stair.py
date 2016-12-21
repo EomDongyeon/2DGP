@@ -8,6 +8,7 @@ class Stair:
     LEFT_DIR, RIGHT_DIR = 0, 1
     i = 0
     x, y = 400, 20
+    flag = False
     image = None
     image2 = None
     image3 = None
@@ -37,7 +38,6 @@ class Stair:
 
         Stair.i += 1
         Stair.x,Stair.y = self.x, self.y
-        print(self.i, self.x, self.y, self.dir)
 
     def reset(self):
         self.num = Stair.i

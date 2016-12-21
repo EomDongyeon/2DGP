@@ -22,6 +22,7 @@ stairs = None
 timer = None
 item = None
 bg = None
+invincibility_image = None
 font = None
 up_key = False
 main_time = 0.0
@@ -29,7 +30,8 @@ current_time = 0.0
 
 
 def enter():
-    global player, bg, stairs, timer, current_time, main_time, item
+    global player, bg, stairs, timer, current_time, main_time, item, invincibility_image
+    invincibility_image = load_image('resource/Item_Hero_f5.png')
     bg = Background()
     item = Item()
     stairs = [Stair() for i in range(120)]
@@ -78,11 +80,12 @@ def handle_events(frame_time):
                     current_time = get_time()
                     frame_time = get_frame_time(frame_time)
                     player.jump(frame_time, stairs)
-                    if (Character.player_score >= 5):
-                        bg.bg_moveY()
-                        for stair in stairs:
-                            stair.moveY()
-                        player.moveY(stairs)
+                    if (Character.moveStop == False):
+                        if (Character.player_score >= 5):
+                            bg.bg_moveY()
+                            for stair in stairs:
+                                stair.moveY()
+                            player.moveY(stairs)
             if event.key == SDLK_w: #방향전환
                 Character.player_score += 1
                 if(Timer.time_state == Timer.TIME_ACTIVATION):
@@ -92,11 +95,12 @@ def handle_events(frame_time):
                     current_time = get_time()
                     frame_time = get_frame_time(frame_time)
                     player.jump(frame_time, stairs)
-                    if (Character.player_score >= 5):
-                        bg.bg_moveY()
-                        for stair in stairs:
-                            stair.moveY()
-                        player.moveY(stairs)
+                    if (Character.moveStop == False):
+                        if (Character.player_score >= 5):
+                            bg.bg_moveY()
+                            for stair in stairs:
+                                stair.moveY()
+                            player.moveY(stairs)
             if event.key == SDLK_F1:
                 f = open('data/player_info_data.txt', 'r')
                 info_data = json.load(f)
@@ -116,6 +120,9 @@ def handle_events(frame_time):
                 f = open('data/player_info_data.txt', 'w')
                 json.dump(info_data, f)
                 f.close()
+
+            if event.key == SDLK_F5:
+                Character.invincibility_mode = True
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_q:
@@ -175,6 +182,9 @@ def draw(frame_time):
     player.draw()
     timer.draw()
     item.draw()
+
+    if(Character.invincibility_mode == True):
+        invincibility_image.draw(760, 570)
 
     font = load_font('resource/Typo_SsangmunDongB.TTF', 30)
     font.draw(20, 570, "SCORE: %d" % (Character.player_score) , (0, 0, 0))

@@ -15,6 +15,7 @@ class Character:
     jump_key = False
     player_score = 0
     die_state = False
+    moveStop = False
     infinity_state = False
     invincibility_mode = False
     dead_time = 0.0
@@ -42,7 +43,6 @@ class Character:
             self.state = Character.LEFT_STAND
         else:
             self.state = Character.RIGHT_STAND
-        print(1, stairs[0].dir, self.dir)
         self.total_frames = 0.0
 
         if(Character.image == None):
@@ -92,18 +92,23 @@ class Character:
         self.bgm2.set_volume(64)
         self.bgm2.play(1)
         if(stairs[Character.player_score].dir == self.dir):
+            Character.moveStop = False
             if(self.dir == -1):
                 self.state = Character.LEFT_RUN
                 self.x = stairs[Character.player_score].x
             else:
                 self.state = Character.RIGHT_RUN
                 self.x = stairs[Character.player_score].x
-
             self.y = stairs[Character.player_score].y + 60
         else:
+            Character.moveStop = True
             if(Character.invincibility_mode == True):
                 Character.player_score -= 1
                 self.dir = stairs[Character.player_score].dir
+                if (self.dir == -1):
+                    self.state = Character.LEFT_RUN
+                else:
+                    self.state = Character.RIGHT_RUN
             else:
                 if(Character.life_state == True):
                     Character.player_score -= 1
@@ -192,12 +197,10 @@ class Character:
             #캐릭터 초기화
             self.reset(stairs)
 
-
     def moveY(self, stairs):
         self.y = stairs[Character.player_score].y + 60
 
     def draw(self):
-        print(self.state)
         if(self.state > Character.DIE):
             self.image.clip_draw(self.frame * 96, self.state * 148, 86, 136, self.x, self.y)
         else:

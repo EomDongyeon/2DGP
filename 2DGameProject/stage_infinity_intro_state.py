@@ -17,6 +17,7 @@ def enter():
     image2 = load_image('resource/infinity_mode_bg.png')
 
 
+
 def exit():
     global image1, image2
     del(image1)

@@ -21,16 +21,9 @@ def enter():
     f = open('data/infinity_player_data.txt', 'r')
     infinity_player_data = json.load(f)
     f.close()
-    total_money()
     GameSound.sound_state = GameSound.WIN
     sound.play(GameSound.WIN)
 
-def total_money():
-    global infinity_player_data
-    infinity_player_data[-1]['money'] += infinity_player_data[-1]['score']
-    f = open('data/player_info_data.txt', 'w')
-    json.dump(infinity_player_data, f)
-    f.close()
 
 def exit():
     global image1, image2

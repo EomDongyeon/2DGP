@@ -4,17 +4,13 @@ import random
 import json
 import os
 import game_framework
-import best_score_state
-import gameover_state
-import intinity_itemshop_state
 # import class
 from character import Character
 from stair import Stair
 from background import Background
-from item import Item
 from timer import Timer
 
-name = "Stage1"
+name = "infinity State"
 
 player = None
 stair = None
@@ -30,10 +26,9 @@ current_time = 0.0
 
 
 def enter():
-    global player, bg, stairs, timer, current_time, main_time, item, best_score
+    global player, bg, stairs, timer, current_time, main_time, best_score
     bg = Background()
-    item = Item()
-    stairs = [Stair() for i in range(20)]
+    stairs = [Stair() for i in range(300)]
     player = Character(stairs)
     Character.infinity_state = True
     timer = Timer()
@@ -53,23 +48,18 @@ def enter():
     json.dump(infinity_player_data, f)
     f.close()
 
-    if(infinity_player_data[-1]['item_life'] == True):
-        Character.life_state = True
-
     f = open('data/best_score_data.txt', 'r')
     best_score_data = json.load(f)
     f.close()
     best_score = best_score_data['best_score']
 
-
+    Character.invincibility_mode = False
 
 def exit():
-    global player, bg, stairs, timer, current_time, main_time, item
+    global player, bg, stairs, timer, current_time, main_time
     del(player)
     del(bg)
     del(stairs)
-    del(item)
-    #del(timer)
 
 def pause():
     pass
@@ -97,6 +87,7 @@ def handle_events(frame_time):
                     player.jump(frame_time, stairs)
                     if (Character.player_score >= 5):
                         bg.bg_moveY()
+                        Stair.y -= 27
                         for stair in stairs:
                             stair.moveY()
                         player.moveY(stairs)
@@ -114,25 +105,6 @@ def handle_events(frame_time):
                         for stair in stairs:
                             stair.moveY()
                         player.moveY(stairs)
-            if event.key == SDLK_F1:
-                f = open('data/infinity_player_data.txt', 'r')
-                infinity_player_data = json.load(f)
-                f.close()
-                infinity_player_data[-1]['item_life'] = False
-                f = open('data/infinity_player_data.txt', 'w')
-                json.dump(infinity_player_data, f)
-                f.close()
-
-            if event.key == SDLK_F2:
-                f = open('data/infinity_player_data.txt', 'r')
-                infinity_player_data = json.load(f)
-                f.close()
-                if(infinity_player_data[-1]['item_stop'] == True):
-                    Timer.time_state = Timer.TIME_STOP
-                    infinity_player_data[-1]['item_stop'] = False
-                f = open('data/infinity_player_data.txt', 'w')
-                json.dump(infinity_player_data, f)
-                f.close()
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_q:
@@ -155,8 +127,7 @@ def update(frame_time):
     for stair in stairs:
         stair.update()
 
-    print("계단 %d" % Stair.i)
-    if(Character.player_score >= ((Stair.i / 2) - 15)):
+    if(Character.player_score >= ((Stair.i / 2))):
         for i in range(100):
             stairs.append(Stair())
 
@@ -180,7 +151,6 @@ def draw(frame_time):
 
     player.draw()
     timer.draw()
-    item.draw()
 
     font = load_font('resource/Typo_SsangmunDongB.TTF', 30)
     font.draw(20, 570, "SCORE: %d" % (Character.player_score) , (0, 0, 0))

@@ -8,9 +8,7 @@ from pico2d import *
 
 
 
-
-
-name = "GameOverState"
+name = "Home State"
 bg_image = None
 board_image = None
 score_data = None
