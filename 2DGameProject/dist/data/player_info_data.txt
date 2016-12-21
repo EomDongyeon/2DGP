@@ -1,0 +1,1 @@
+[{"score2": 0, "score3": 0, "score1": 29, "item_stop": false, "money": 329, "item_life": false, "stage": 2}, {"score2": 0, "score3": 0, "score1": 10, "item_stop": false, "money": 310, "stage": 1, "item_life": false}]
